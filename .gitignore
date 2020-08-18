@@ -1,0 +1,13 @@
+Debug/
+Release/
+ipch/
+
+*.sdf
+
+# 高级编辑器
+.idea
+.vscode
+.vs
+
+.svn
+

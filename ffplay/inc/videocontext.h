@@ -3,56 +3,42 @@
 #include <QDebug>
 #include <QImage>
 
-extern "C"
-{
-    #include <libavcodec/avcodec.h>
-    #include <libavformat/avformat.h>
-    #include <libswscale/swscale.h>
-    #include <libavutil/imgutils.h>
-};
+#include "codehandler.h"
 
 class MainWin{
 public:
     virtual void setVideoImage(QImage img) = 0;
 };
-//// 延时函数
-//void delay(int msec)
-//{
 
-//}
-
-class VideoContext
+class VideoContext : public CodeInterface
 {
 public:
     VideoContext(MainWin* main_win);
-    ~VideoContext();
+    virtual ~VideoContext();
 
     //MainCallBack
 
 public:
-    bool init(QString url);
-    int findStreamIndex();
-    bool openCodeCtx();
-    void setImage();
+    virtual int32_t init(AVFormatContext* format_ctx);
+    virtual int32_t openCodeContxt(AVFormatContext* format_ctx);
+    virtual int32_t decode() { return 0;}
+    virtual int32_t encode() {return 0;}
 
+    void setImage(AVFormatContext* format_ctx);
     void releaseAV();
 
 
 private:
-    AVFormatContext* pFormatCtx_;  // 存储音视频封装格式中包含的信息
-    AVCodecContext*  pCodecCtx_;   // 视频流编码结构
-    AVCodec*         pCodec_;        // 视频解码器
-    AVFrame*         pFrame_;
-    AVFrame*         pFrameYUV_;
-    AVPacket*        pPacket_;
-    int              videoindex_;   //视频帧索引，初始化为-1
+    AVFormatContext* format_ctx_;  // 存储音视频封装格式中包含的信息
+    AVFrame*         frame_yuv_;
+    int              video_index_;   //视频帧索引，初始化为-1
 
     unsigned char *out_buffer_;
     struct SwsContext *img_convert_ctx_; // 主要用于视频图像的转换
 
 
 private:
-    QString         streamUrl_;
+    QString         stream_url_;
     MainWin*        main_win_;
 
 };

@@ -27,14 +27,34 @@ void MainWindow::setVideoImage(QImage img)
 
 void MainWindow::on_pushButton_clicked()
 {
-    QString strTxtEdt = ui->lineEdit->text();
-if (strTxtEdt.length() < 1)
-{
-    qDebug() << "please input stream url！！！";
-    return;
+    video_->releaseAV();
+
+   QString strTxtEdt = ui->lineEdit->text();
+   if (strTxtEdt.length() < 1)
+   {
+       qDebug() << "please input stream url";
+       return;
+
+
+   }
+    AVFormatContext* format_ctx = avformat_alloc_context();
+   // 打开音视频流
+   if(avformat_open_input(&format_ctx,strTxtEdt.toStdString().c_str(),nullptr,nullptr)!=0){
+       qDebug() << ("Couldn't open input stream.\n");
+       return;
+   }
+
+   // 获取音视频流数据信息
+   if(avformat_find_stream_info(format_ctx,nullptr)<0){
+       qDebug() << ("Couldn't find stream information.\n");
+       return ;
+   }
+
+   video_->init(format_ctx);
+   video_->setImage(format_ctx);
 }
-       video_->init(strTxtEdt);
-       video_->findStreamIndex();
-       video_->openCodeCtx();
-       video_->setImage();
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    video_->releaseAV();
 }

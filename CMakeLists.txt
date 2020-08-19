@@ -1,5 +1,12 @@
 # vcpkg的根目录
-set(CMAKE_TOOLCHAIN_FILE "/Users/sources/vcpkg/scripts/buildsystems/vcpkg.cmake")
+IF (WIN32)
+SET(VCPKGROOT "D:/Work/vcpkg")
+ELSEIF (APPLE)
+SET(VCPKGROOT "/Users/sources/vcpkg")
+ELSEIF (UNIX)
+SET(VCPKGROOT "/Users/sources/vcpkg")
+ENDIF ()
+set(CMAKE_TOOLCHAIN_FILE "${VCPKGROOT}/scripts/buildsystems/vcpkg.cmake")
 cmake_minimum_required(VERSION 2.8)
 
 project(FFPlay
@@ -29,15 +36,9 @@ if(UNIX AND NOT APPLE)
     find_package(Qt5DBus)
 endif()
 find_package(PkgConfig)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 
-#set(QT Core Gui Widgets Network DBus Sql)
-#find_package(Qt5 REQUIRED ${QT})
-#qt5_use_modules(${PROJECT_OUTNAME} ${QT})
-
-#pkg_check_modules(QSS REQUIRED QtShadowsocks>=2.0.0)
-#find_library(QSS_LIBRARY_VAR
-      #  NAMES ${QSS_LIBRARIES}
-      #  HINTS ${QSS_LIBRARY_DIRS} ${QSS_LIBDIR})
 
 if(WIN32 OR APPLE)
     add_definitions(-DFD_SETSIZE=1024)

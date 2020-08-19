@@ -11,23 +11,41 @@ find_package(FFMPEG)
 if (FFMPEG_FOUND)
 endif ()
 
-message("############" ${FFMPEG_INCLUDE_DIRS})
-    message("############" ${FFMPEG_LIBRARY_DIRS})
+IF (WIN32)
+    SET(OUTPUT_PATH_DEBUG ${PROJECT_SOURCE_DIR}/../build/debug_windows_x64)
+    SET(OUTPUT_PATH_RELEASE ${PROJECT_SOURCE_DIR}/../bin/windows_x64/im_common)
+    SET(PROJECT_LIB_DIR_DEBUG ${PROJECT_SOURCE_DIR}/../build/debug_windows_x64)
+    SET(PROJECT_LIB_DIR_RELEASE ${PROJECT_SOURCE_DIR}/../bin/windows_x64/im_common)
 
-SET(OUTPUT_PATH_DEBUG ${PROJECT_SOURCE_DIR}/../build/debug_macos_x64)
-SET(OUTPUT_PATH_RELEASE ${PROJECT_SOURCE_DIR}/../bin/macos_x64/im_common)
-SET(PROJECT_LIB_DIR_DEBUG ${PROJECT_SOURCE_DIR}/../build/debug_macos_x64)
-SET(PROJECT_LIB_DIR_RELEASE ${PROJECT_SOURCE_DIR}/../bin/macos_x64/im_common)
+    SET(PROJECT_LIBS_PLATFORM_DEBUG
+        debug ${FFMPEG_LIBRARIES}
+        )
+    SET(PROJECT_LIBS_PLATFORM_RELEASE
+        #optimized ${PROJECT_LIB_DIR_RELEASE}/
+        optimized ${FFMPEG_LIBRARIES}
+        )
 
-SET(PROJECT_LIBS_PLATFORM_DEBUG
-    debug ${FFMPEG_LIBRARIES}
-    debug X11
-    debug dl
-    )
-SET(PROJECT_LIBS_PLATFORM_RELEASE
-    #optimized ${PROJECT_LIB_DIR_RELEASE}/
-    optimized ${FFMPEG_LIBRARIES}
-    )
+ELSEIF (APPLE)
+
+    SET(OUTPUT_PATH_DEBUG ${PROJECT_SOURCE_DIR}/../build/debug_macos_x64)
+    SET(OUTPUT_PATH_RELEASE ${PROJECT_SOURCE_DIR}/../bin/macos_x64/im_common)
+    SET(PROJECT_LIB_DIR_DEBUG ${PROJECT_SOURCE_DIR}/../build/debug_macos_x64)
+    SET(PROJECT_LIB_DIR_RELEASE ${PROJECT_SOURCE_DIR}/../bin/macos_x64/im_common)
+
+    SET(PROJECT_LIBS_PLATFORM_DEBUG
+        debug ${FFMPEG_LIBRARIES}
+        debug X11
+        debug dl
+        )
+    SET(PROJECT_LIBS_PLATFORM_RELEASE
+        #optimized ${PROJECT_LIB_DIR_RELEASE}/
+        optimized ${FFMPEG_LIBRARIES}
+        optimized X11
+        optimized dl
+        )
+
+ELSEIF (UNIX)
+ENDIF ()
 
 
 include_directories(
@@ -36,9 +54,8 @@ include_directories(
 )
 link_directories(
     ${FFMPEG_LIBRARY_DIRS}
-    /usr/X11/lib/
+    #/usr/X11/lib/
     )
-
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 file(GLOB_RECURSE HEAD_FILES inc/*.h)

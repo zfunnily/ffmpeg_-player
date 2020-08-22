@@ -10,15 +10,12 @@ vcpkg install ffmpeg:x64-osx
 vcpkg install ffmpeg:x64-linux
 ```
 
-
 ## 开发日志
 * 2020-08/18 在mac上使用qt+ffmpeg完成拉流并且渲染视频
-
+* 2020-08/22 完成摄像头捕获。添加一个管理类AVManager
 ## TODO
-- [ x ] 拉流
-
-- [ x ] 推流
-
-- [ x ] 拉流音视频播放
-
-- [ x ] 播放本地文件
+- [x] 拉流  
+- [x] 摄像头捕获
+- [ ] 捕获摄像头数据推流  
+- [ ] 拉流音视频播放
+- [ ] 播放本地文件

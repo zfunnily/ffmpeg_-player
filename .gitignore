@@ -9,5 +9,15 @@ ipch/
 .vscode
 .vs
 
+# svn仓库
 .svn
 
+# 缓存文件
+CMakeCache.txt
+CMakeLists.txt.user.*
+compile_commands.json
+FFPlay.cbp
+cmake_install.cmake
+Makefile
+*.cpp_parameters
+CMakeFiles

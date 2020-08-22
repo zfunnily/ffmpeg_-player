@@ -36,8 +36,6 @@ if(UNIX AND NOT APPLE)
     find_package(Qt5DBus)
 endif()
 find_package(PkgConfig)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 
 
 if(WIN32 OR APPLE)

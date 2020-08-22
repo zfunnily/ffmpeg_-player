@@ -1,9 +1,10 @@
 #include "videocontext.h"
 
-VideoContext::VideoContext(MainWin* main_win)
+VideoContext::VideoContext()
     : frame_yuv_(nullptr),video_index_(-1),
-      out_buffer_(nullptr),img_convert_ctx_(nullptr),main_win_(main_win)
+      out_buffer_(nullptr),img_convert_ctx_(nullptr)
 {
+    device_ = new DeviceInfo();
 }
 
 VideoContext::~VideoContext()
@@ -24,7 +25,14 @@ VideoContext::~VideoContext()
 }
 
 int32_t VideoContext::openCodeContxt(AVFormatContext* format_ctx)
-{
+{    
+    // 获取视频流数据信息
+    if (avformat_find_stream_info(format_ctx,nullptr) < 0)
+    {
+        qDebug() << "无法获取流信息！";
+        return -1;
+    }
+
     video_index_ = -1;
     // 查找视频流的起始索引位置（nb_streams表示视音频流的个数）
     for(int i=0; i<format_ctx->nb_streams; i++)
@@ -52,9 +60,9 @@ int32_t VideoContext::openCodeContxt(AVFormatContext* format_ctx)
     }
 
     // 打印视频信息
-    qDebug() << ("--------------- File Information ----------------\n");
-    av_dump_format(format_ctx, 0, stream_url_.toStdString().c_str(), 0); // 此函数打印输入或输出的详细信息
-    qDebug() << ("-------------------------------------------------\n");
+//    qDebug() << ("--------------- File Information ----------------\n");
+//    av_dump_format(format_ctx, 0, stream_url_.toStdString().c_str(), 0); // 此函数打印输入或输出的详细信息
+//    qDebug() << ("-------------------------------------------------\n");
 }
 
 int32_t VideoContext::init(AVFormatContext* format_ctx)
@@ -62,7 +70,7 @@ int32_t VideoContext::init(AVFormatContext* format_ctx)
     if (openCodeContxt(format_ctx) != 0)
     {
         qDebug() << ("faile open CodeContxt!!");
-        return 1;
+        return -1;
     }
     frame_= av_frame_alloc();
     frame_yuv_= av_frame_alloc();
@@ -95,7 +103,7 @@ void VideoContext::setImage(AVFormatContext* format_ctx)
    setStreamState(STREAMING);//改变状态
 
    // av_read_frame读取一帧未解码的数据
-   while (av_read_frame(format_ctx, packet) >= 0 && getStreamState() == STREAMING)
+   while (av_read_frame(format_ctx, packet) >= 0)
    {
        // 如果是视频数据
        if (packet->stream_index == video_index_)
@@ -112,7 +120,7 @@ void VideoContext::setImage(AVFormatContext* format_ctx)
                sws_scale(img_convert_ctx_, (const unsigned char* const*)frame_->data, frame_->linesize, 0, frame_->height,
                                    frame_yuv_->data, frame_yuv_->linesize);
                QImage img((uchar*)frame_yuv_->data[0],codec_context_->width,codec_context_->height,QImage::Format_RGB32);
-               main_win_->setVideoImage(img);
+               emit sign_setVideoImage(img);
            }
        }
        av_free_packet(packet);
@@ -131,3 +139,11 @@ void VideoContext::releaseAV()
        setStreamState(NONE);//改变状态
 }
 
+
+void VideoContext::getDevice()
+{
+    device_->show_dshow_device();
+    device_->show_dshow_device_option();
+    device_->show_vfw_device();
+    //device_->show_avfoundation_device();
+}

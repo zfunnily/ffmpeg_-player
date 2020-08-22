@@ -4,19 +4,14 @@
 #include <QImage>
 
 #include "codehandler.h"
+#include "deviceinfo.h"
 
-class MainWin{
-public:
-    virtual void setVideoImage(QImage img) = 0;
-};
-
-class VideoContext : public CodeInterface
+class VideoContext : public QObject,public CodeInterface
 {
+    Q_OBJECT
 public:
-    VideoContext(MainWin* main_win);
+    VideoContext();
     virtual ~VideoContext();
-
-    //MainCallBack
 
 public:
     virtual int32_t init(AVFormatContext* format_ctx);
@@ -24,9 +19,16 @@ public:
     virtual int32_t decode() { return 0;}
     virtual int32_t encode() {return 0;}
 
-    void setImage(AVFormatContext* format_ctx);
     void releaseAV();
 
+public:
+    void getDevice();
+public slots :
+    void setImage(AVFormatContext* format_ctx);
+
+public: signals:
+// 图像信号
+    void sign_setVideoImage(QImage img);
 
 private:
     AVFormatContext* format_ctx_;  // 存储音视频封装格式中包含的信息
@@ -36,10 +38,9 @@ private:
     unsigned char *out_buffer_;
     struct SwsContext *img_convert_ctx_; // 主要用于视频图像的转换
 
-
 private:
     QString         stream_url_;
-    MainWin*        main_win_;
+    DeviceInfo*     device_;
 
 };
 

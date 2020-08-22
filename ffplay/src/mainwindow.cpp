@@ -7,7 +7,13 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    video_ = new VideoContext(this);
+
+    av_manager_ = new AVManager();
+
+    // 拉流视频显示的信号
+    QObject::connect(av_manager_, SIGNAL(sign_setVideoImage(QImage)), this, SLOT(slot_setVideoImage(QImage)));
+    // 摄像头显示的信号
+    QObject::connect(av_manager_, SIGNAL(sign_setCameraImage(QImage)), this, SLOT(slot_setCameraImage(QImage)));
 }
 
 MainWindow::~MainWindow()
@@ -15,10 +21,21 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setVideoImage(QImage img)
+void MainWindow::slot_setCameraImage(QImage img)
+{
+    ui->device->setPixmap(QPixmap::fromImage(img)); // 在label上播放视频图片
+
+    //延时
+    QTime dieTime = QTime::currentTime().addMSecs(40);
+    while( QTime::currentTime() < dieTime )
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+void MainWindow::slot_setVideoImage(QImage img)
 {
    ui->label->setPixmap(QPixmap::fromImage(img)); // 在label上播放视频图片
 
+   //延时
    QTime dieTime = QTime::currentTime().addMSecs(40);
    while( QTime::currentTime() < dieTime )
        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
@@ -27,34 +44,25 @@ void MainWindow::setVideoImage(QImage img)
 
 void MainWindow::on_pushButton_clicked()
 {
-    video_->releaseAV();
-
    QString strTxtEdt = ui->lineEdit->text();
    if (strTxtEdt.length() < 1)
    {
        qDebug() << "please input stream url";
        return;
-
-
    }
-    AVFormatContext* format_ctx = avformat_alloc_context();
-   // 打开音视频流
-   if(avformat_open_input(&format_ctx,strTxtEdt.toStdString().c_str(),nullptr,nullptr)!=0){
-       qDebug() << ("Couldn't open input stream.\n");
-       return;
-   }
+   av_manager_->startRtmp();
+   av_manager_->startRtmp();
 
-   // 获取音视频流数据信息
-   if(avformat_find_stream_info(format_ctx,nullptr)<0){
-       qDebug() << ("Couldn't find stream information.\n");
-       return ;
-   }
 
-   video_->init(format_ctx);
-   video_->setImage(format_ctx);
 }
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    video_->releaseAV();
+    av_manager_->stopRtmp();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    av_manager_->initCamera();
+    av_manager_->startCamera();
 }

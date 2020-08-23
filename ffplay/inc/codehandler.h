@@ -8,8 +8,8 @@ extern "C"
     #include <libavutil/imgutils.h>
 
     #include "libavdevice/avdevice.h"
+    #include "libavutil/time.h"
 };
-#include "libavdevice/avdevice.h"
 
 class CodeInterface{
 public:

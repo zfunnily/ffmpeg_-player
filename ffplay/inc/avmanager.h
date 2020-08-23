@@ -11,15 +11,16 @@ public:
     ~AVManager();
 
 public:
-    int32_t initCamera();
+    // 摄像头捕获
     int32_t startCamera();
     int32_t stopCamera();
 
-
-
-    int32_t initRtmp(QString url);
-    int32_t startRtmp();
+    // 拉流
+    int32_t startRtmp(QString url);
     int32_t stopRtmp();
+
+    // 推流
+    int32_t pushCamera();
 
 public : signals:
     void sign_setCameraImage(QImage img);

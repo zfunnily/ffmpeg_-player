@@ -1,20 +1,13 @@
 #include "deviceinfo.h"
 //Q_DECLARE_METATYPE(QCameraInfo)
 
-DeviceInfo::DeviceInfo():format_ctx_(nullptr),options_(nullptr),iformat_(nullptr)
+DeviceInfo::DeviceInfo()
 {
     avdevice_register_all();
-
-    format_ctx_ = avformat_alloc_context();
 }
 
 DeviceInfo::~DeviceInfo()
 {
-    delete format_ctx_;
-    delete iformat_;
-    format_ctx_ = nullptr;
-    options_ = nullptr;
-    iformat_ = nullptr;
 }
 
 void DeviceInfo::show_dshow_device()
@@ -49,7 +42,7 @@ void DeviceInfo::show_vfw_device()
     qDebug() <<("=============================\n");
 }
 
-void DeviceInfo::show_avfoundation_device(AVFormatContext*   format_ctx)
+int32_t DeviceInfo::show_avfoundation_device(AVFormatContext*   format_ctx)
 {
    AVDictionary* options = nullptr;
    av_dict_set(&options,"list_devices","true",0);
@@ -59,8 +52,11 @@ void DeviceInfo::show_avfoundation_device(AVFormatContext*   format_ctx)
    if (avformat_open_input(&format_ctx,"1",iformat,nullptr) != 0)
    {
         qDebug() << "Couldn't open input stream. \n";
+        qDebug() <<("=============================\n");
+        return -1;
    }
    qDebug() <<("=============================\n");
+   return 0;
 
 
 }

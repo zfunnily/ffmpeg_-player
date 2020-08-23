@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete av_manager_;
+    av_manager_ = nullptr;
 }
 
 void MainWindow::slot_setCameraImage(QImage img)
@@ -50,10 +52,7 @@ void MainWindow::on_pushButton_clicked()
        qDebug() << "please input stream url";
        return;
    }
-   av_manager_->startRtmp();
-   av_manager_->startRtmp();
-
-
+   av_manager_->startRtmp(strTxtEdt);
 }
 
 void MainWindow::on_pushButton_2_clicked()
@@ -63,6 +62,10 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    av_manager_->initCamera();
     av_manager_->startCamera();
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    av_manager_->pushCamera();
 }

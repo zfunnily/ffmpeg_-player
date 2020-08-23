@@ -25,11 +25,7 @@ public:
     void show_vfw_device();
 
     //Show AVFoundation Device
-    void show_avfoundation_device(AVFormatContext*   format_ctx);
-private:
-    AVFormatContext*   format_ctx_;
-    AVDictionary* options_;
-    AVInputFormat* iformat_;
+    int32_t show_avfoundation_device(AVFormatContext*   format_ctx);
 };
 
 #endif // DEVICEINFO_H

@@ -9,6 +9,8 @@ VideoContext::VideoContext()
 
 VideoContext::~VideoContext()
 {
+    releaseAV();
+
     codec_context_ = nullptr;
     codec_ = nullptr;
     frame_ = nullptr;
@@ -103,7 +105,7 @@ void VideoContext::setImage(AVFormatContext* format_ctx)
    setStreamState(STREAMING);//改变状态
 
    // av_read_frame读取一帧未解码的数据
-   while (av_read_frame(format_ctx, packet) >= 0)
+   while (av_read_frame(format_ctx, packet) >= 0 && getStreamState() == STREAMING)
    {
        // 如果是视频数据
        if (packet->stream_index == video_index_)

@@ -1,7 +1,10 @@
 ## 参考博文
 拉流：https://blog.csdn.net/leixiaohua1020/article/details/46890487
+
 推流：https://blog.csdn.net/leixiaohua1020/article/details/39803457
+
 摄像头捕获：https://blog.csdn.net/leixiaohua1020/article/details/39702113
+
 ## 安装依赖
 qt13
 ### MACOS
